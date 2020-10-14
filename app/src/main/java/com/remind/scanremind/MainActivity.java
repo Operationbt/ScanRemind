@@ -298,4 +298,13 @@ public class MainActivity extends AppCompatActivity {
         integrator.setPrompt("SCAN CODE");
         integrator.initiateScan();
     }
+
+    //testButton
+    public void btnTest(View v) {
+        Intent intent = new Intent(MainActivity.this, SetScanInfoActivity.class);
+        intent.putExtra("bbb", "hello");
+        startActivity(intent);
+    }
+
+
 }
