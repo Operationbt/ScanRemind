@@ -246,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     //바코드 리스트에 데이터 추가
-    //지금은 스캔한 바코드 넘버만 넘긴다
     public void addBarcodeList(String number) {
         //todo-바코드 넘버를 토대로 제품이름, 사진, dDay 검색해서 얻어와야함
         //bList.add(new BarcodeData(number, name, img, nowTimetoString(), dday));
@@ -256,7 +255,13 @@ public class MainActivity extends AppCompatActivity {
         insert(bList.get(bList.size() - 1));
         adapter.notifyDataSetChanged();
     }
-
+    public void addBarcodeList(String number, String name, int img, String date, String dday) {
+        bList.add(new BarcodeData(number, name, img, date, dday));
+        Log.d("addList", bList.toString());
+        //setBarcodeListFireBase();
+        insert(bList.get(bList.size() - 1));
+        adapter.notifyDataSetChanged();
+    }
 
     //스캔하고 메인액티비티로 넘어올 때 이벤트
     @Override
@@ -264,15 +269,29 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() != null) {
-                //Toast.makeText(getApplicationContext(), result.getContents(), Toast.LENGTH_SHORT).show();
-                txt_barcodeNum.setText(result.getContents());
-                addBarcodeList(result.getContents());
-            }
-            else {
-                Toast.makeText(getApplicationContext(), "No Result", Toast.LENGTH_SHORT).show();
-            }
+        switch (requestCode) {
+            case 49374 : //바코드 스캔 결과 requestCode = c0de 으로 고정
+                if (result != null) {
+                    if (result.getContents() != null) {
+                        //Toast.makeText(getApplicationContext(), result.getContents(), Toast.LENGTH_SHORT).show();
+                        txt_barcodeNum.setText(result.getContents());
+                        addBarcodeList(result.getContents());
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No Result", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            case 1 :    //SetScanInfoActivity
+                if(resultCode == 1) {
+                    addBarcodeList(data.getStringExtra("number"),
+                            data.getStringExtra("name"),
+                            data.getIntExtra("img", 1),
+                            data.getStringExtra("date"),
+                            data.getStringExtra("dday"));
+                } else {
+                    Toast.makeText(MainActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
@@ -302,8 +321,9 @@ public class MainActivity extends AppCompatActivity {
     //testButton
     public void btnTest(View v) {
         Intent intent = new Intent(MainActivity.this, SetScanInfoActivity.class);
-        intent.putExtra("bbb", "hello");
-        startActivity(intent);
+        intent.putExtra("mode", "add");
+        startActivityForResult(intent, 1);
+        //startActivity(intent);
     }
 
 }

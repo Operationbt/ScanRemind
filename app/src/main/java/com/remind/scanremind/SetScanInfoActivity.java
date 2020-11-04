@@ -14,12 +14,20 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
 public class SetScanInfoActivity extends AppCompatActivity {
     // Millisecond 형태의 하루(24 시간)
     private final int ONE_DAY = 24 * 60 * 60 * 1000;
+    //바코드 정보 필드
+    //number, name, img, nowTimetoString(), dday
+    String number = null;
+    String name = null;
+    int imageID = 1;
+    String regDate = null;
+    String dday = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +42,9 @@ public class SetScanInfoActivity extends AppCompatActivity {
         integrator.setPrompt("SCAN CODE");
         integrator.initiateScan();
 
-        //스캔한 바코드 정보를 인텐트로 받아옴
+        //메인액티비티에서 수정/추가 정보를 인텐트로 받아옴
         Intent intent = new Intent(this.getIntent());
-        String s = intent.getStringExtra("bbb");
+        String s = intent.getStringExtra("mode");
         TextView textView = findViewById(R.id.textView);
         textView.setText(s);
     }
@@ -45,7 +53,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        //바코드 스캔 정보
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
@@ -53,6 +61,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
 
                 TextView textView2 = findViewById(R.id.textViewBarnum);
                 textView2.setText(result.getContents());
+                number = result.getContents();  //스캔된 바코드 넘버
             }
             else {
                 Toast.makeText(getApplicationContext(), "No Result", Toast.LENGTH_SHORT).show();
@@ -74,9 +83,9 @@ public class SetScanInfoActivity extends AppCompatActivity {
 
         Toast.makeText(this,"Date: "+dateMessage,Toast.LENGTH_SHORT).show();
 
-
-        TextView textDday = findViewById(R.id.editText4);
-        textDday.setText(getDday(year, month, day));
+        dday = getDday(year, month, day);
+        TextView textDday = findViewById(R.id.textView3);
+        textDday.setText(dday);
     }
 
     private String getDday(int a_year, int a_monthOfYear, int a_dayOfMonth) {
@@ -90,5 +99,26 @@ public class SetScanInfoActivity extends AppCompatActivity {
         long result = dday - today;
 
         return Long.toString(result);
+    }
+
+
+    public void setSavebtnOnclick(View v) {
+        Intent intent = new Intent(SetScanInfoActivity.this, MainActivity.class);
+        //number, name, img, nowTimetoString(), dday
+        intent.putExtra("number", number);
+        intent.putExtra("name", "mask");
+        intent.putExtra("img", nowTimetoString());
+        intent.putExtra("dday", dday);
+
+        setResult(1, intent);
+        finish();
+    }
+
+    public static String nowTimetoString() {
+        long now = System.currentTimeMillis();
+        java.util.Date date = new java.util.Date(now);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String result = sdf.format(date);
+        return result;
     }
 }
