@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(BarcodeDataContract.BarcodeTable.COLUMN_NAME_BNUMBER, b.getNumber());
         values.put(BarcodeDataContract.BarcodeTable.COLUMN_NAME_BNAME, b.getName());
-        values.put(BarcodeDataContract.BarcodeTable.COLUMN_NAME_IMGID, b.getImageID());
+        values.put(BarcodeDataContract.BarcodeTable.COLUMN_NAME_IMGSRC, b.getImageSrc());
         values.put(BarcodeDataContract.BarcodeTable.COLUMN_NAME_REGDATE, getTime);
         values.put(BarcodeDataContract.BarcodeTable.COLUMN_NAME_DDAY, "1");
         // Insert the new row, returning the primary key value of the new row
@@ -104,19 +104,19 @@ public class MainActivity extends AppCompatActivity {
 
             String number;
             String name;
-            int imageID;
+            String imageSrc;
             String regDate;
             String dday;
             while (cursor.moveToNext()) {
                 number = cursor.getString(0);
                 name = cursor.getString(1);
-                imageID = cursor.getInt(2);
+                imageSrc = cursor.getString(2);
                 regDate = cursor.getString(3);
                 dday = cursor.getString(4);
 
                 txt_SQLResult.append(String.format("\nnumber = %s, name = %s, img = %s, date = %s, dday=%s",
-                        number, name, imageID, regDate, dday));
-                selList.add(new BarcodeData(number, name, imageID, regDate, dday));
+                        number, name, imageSrc, regDate, dday));
+                selList.add(new BarcodeData(number, name, imageSrc, regDate, dday));
             }
         } else {
             txt_SQLResult.append("\n조회결과가 없습니다.");
@@ -147,11 +147,11 @@ public class MainActivity extends AppCompatActivity {
     private BarcodeData createFromResultSet(ResultSet rs) throws SQLException {
         String number = rs.getString(BarcodeDataContract.BarcodeTable.COLUMN_NAME_BNUMBER);
         String name = rs.getString(BarcodeDataContract.BarcodeTable.COLUMN_NAME_BNAME);
-        int imageID = rs.getInt(BarcodeDataContract.BarcodeTable.COLUMN_NAME_IMGID);
+        String imageSrc = rs.getString(BarcodeDataContract.BarcodeTable.COLUMN_NAME_IMGSRC);
         String regDate = rs.getString(BarcodeDataContract.BarcodeTable.COLUMN_NAME_REGDATE);
         String dday = rs.getString(BarcodeDataContract.BarcodeTable.COLUMN_NAME_DDAY);
 
-        BarcodeData b = new BarcodeData(number, name, imageID, regDate, dday);
+        BarcodeData b = new BarcodeData(number, name, imageSrc, regDate, dday);
 
         return b;
     }
@@ -247,15 +247,13 @@ public class MainActivity extends AppCompatActivity {
 
     //바코드 리스트에 데이터 추가
     public void addBarcodeList(String number) {
-        //todo-바코드 넘버를 토대로 제품이름, 사진, dDay 검색해서 얻어와야함
-        //bList.add(new BarcodeData(number, name, img, nowTimetoString(), dday));
-        bList.add(new BarcodeData(number, "샘플", 1, nowTimetoString(), null));
+        bList.add(new BarcodeData(number, "샘플", null, nowTimetoString(), null));
         Log.d("addList", bList.toString());
         //setBarcodeListFireBase();
         insert(bList.get(bList.size() - 1));
         adapter.notifyDataSetChanged();
     }
-    public void addBarcodeList(String number, String name, int img, String date, String dday) {
+    public void addBarcodeList(String number, String name, String img, String date, String dday) {
         bList.add(new BarcodeData(number, name, img, date, dday));
         Log.d("addList", bList.toString());
         //setBarcodeListFireBase();
@@ -268,9 +266,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
-            case 49374 : //바코드 스캔 결과 requestCode = c0de 으로 고정
+            case 49374 : //바코드 스캔 결과 requestCode = c0de
+                IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
                 if (result != null) {
                     if (result.getContents() != null) {
                         //Toast.makeText(getApplicationContext(), result.getContents(), Toast.LENGTH_SHORT).show();
@@ -285,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                 if(resultCode == 1) {
                     addBarcodeList(data.getStringExtra("number"),
                             data.getStringExtra("name"),
-                            data.getIntExtra("img", 1),
+                            data.getStringExtra("img"),
                             data.getStringExtra("date"),
                             data.getStringExtra("dday"));
                 } else {
@@ -296,7 +295,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnScan(View v) {
-        scanMethod();
+        Intent intent = new Intent(MainActivity.this, SetScanInfoActivity.class);
+        intent.putExtra("mode", "add");
+        startActivityForResult(intent, 1);
+        //startActivity(intent);
     }
 
     public void btnSelect(View v) {
@@ -309,21 +311,9 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public void scanMethod() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setCaptureActivity(CaptureActivity.class);
-        integrator.setOrientationLocked(false);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-        integrator.setPrompt("SCAN CODE");
-        integrator.initiateScan();
-    }
-
     //testButton
     public void btnTest(View v) {
-        Intent intent = new Intent(MainActivity.this, SetScanInfoActivity.class);
-        intent.putExtra("mode", "add");
-        startActivityForResult(intent, 1);
-        //startActivity(intent);
+
     }
 
 }

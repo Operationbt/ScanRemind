@@ -46,10 +46,10 @@ public class BarcodeListAdapter extends BaseAdapter {
         View view = mLayoutInflater.inflate(R.layout.barcode_list, null);
 
         ImageView image = view.findViewById(R.id.imageViewImage);
-        TextView name = view.findViewById(R.id.textViewName);
+        TextView name = view.findViewById(R.id.textView_name);
         TextView number = view.findViewById(R.id.textViewNum);
 
-        image.setImageResource(bList.get(position).getImageID());
+        //image.setImageResource(bList.get(position).getImageSrc());
         name.setText(bList.get(position).getName());
         number.setText(bList.get(position).getNumber());
 

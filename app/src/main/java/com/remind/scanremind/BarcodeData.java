@@ -5,18 +5,18 @@ import java.sql.Date;
 public class BarcodeData {
     private String number; //바코드 숫자
     private String name; //이름
-    private int imageID; //사진
+    private String imageSrc; //사진
     private String regDate; //등록일
     private String dday; //유통기한
 
     public BarcodeData() {
-        this(null, null, 0, null, null);
+        this(null, null, null, null, null);
     }
 
-    public BarcodeData(String number, String name, int imageID, String regDate, String dday) {
+    public BarcodeData(String number, String name, String imageSrc, String regDate, String dday) {
         this.number = number;
         this.name = name;
-        this.imageID = imageID;
+        this.imageSrc = imageSrc;
         this.regDate = regDate;
         this.dday = dday;
     }
@@ -37,12 +37,12 @@ public class BarcodeData {
         this.name = name;
     }
 
-    public int getImageID() {
-        return imageID;
+    public String getImageSrc() {
+        return imageSrc;
     }
 
-    public void setImageID(int imageID) {
-        this.imageID = imageID;
+    public void setImageSrc(String imageSrc) {
+        this.imageSrc = imageSrc;
     }
 
     public String getRegDate() {
@@ -66,9 +66,9 @@ public class BarcodeData {
         return "BarcodeData{" +
                 "number='" + number + '\'' +
                 ", name='" + name + '\'' +
-                ", imageID=" + imageID +
-                ", regDate=" + regDate +
-                ", dday=" + dday +
+                ", imageSrc='" + imageSrc + '\'' +
+                ", regDate='" + regDate + '\'' +
+                ", dday='" + dday + '\'' +
                 '}';
     }
 }

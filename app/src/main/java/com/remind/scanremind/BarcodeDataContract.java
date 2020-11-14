@@ -21,7 +21,7 @@ public final class BarcodeDataContract {
         public static final String TEST_TABLE_NAME = "test_tb";
         public static final String COLUMN_NAME_BNUMBER = "number";
         public static final String COLUMN_NAME_BNAME = "name";
-        public static final String COLUMN_NAME_IMGID = "imageID";
+        public static final String COLUMN_NAME_IMGSRC = "imageSrc";
         public static final String COLUMN_NAME_REGDATE = "regDate"; //현재로선 이걸 기본키처럼...
         public static final String COLUMN_NAME_DDAY = "dday";
 
@@ -30,7 +30,7 @@ public final class BarcodeDataContract {
                 TEST_TABLE_NAME + " (" +
                 COLUMN_NAME_BNUMBER + TEXT_TYPE + COMMA_SEP +
                 COLUMN_NAME_BNAME + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_IMGID + INTEGER_TYPE + COMMA_SEP +
+                COLUMN_NAME_IMGSRC + TEXT_TYPE + COMMA_SEP +
                 COLUMN_NAME_REGDATE + TEXT_TYPE + COMMA_SEP +
                 COLUMN_NAME_DDAY + TEXT_TYPE + " )";
 
