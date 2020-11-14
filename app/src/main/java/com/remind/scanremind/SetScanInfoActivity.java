@@ -113,7 +113,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
         String year_string = Integer.toString(year);
         String dateMessage = (month_string + "/" + day_string + "/" + year_string);
 
-        Toast.makeText(this,"Date: "+dateMessage,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Date: "+dateMessage,Toast.LENGTH_SHORT).show();
 
         dday = getDday(year, month, day);
         TextView textDday = findViewById(R.id.textView_dday);
@@ -187,7 +187,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                 doc = Jsoup.connect("http://www.koreannet.or.kr/home/hpisSrchGtin.gs1?gtin=" + number).get();
                 Elements title = doc.select(".productTit"); //class명이 productTit인 것을 선택
                 result = title.text().substring(14);    //13자리 GTIN번호와 공백 하나 제거
-
+                Log.d("doInBackground", "result: " + result);
             } catch (IOException e) {
                 e.printStackTrace();
             }
