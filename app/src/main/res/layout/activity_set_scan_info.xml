@@ -4,82 +4,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".SetScanInfoActivity">
+
+    <ImageView
+        android:id="@+id/imageView_setThumb"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:adjustViewBounds="false"
+        android:background="@color/common_google_signin_btn_text_dark_disabled"
+        android:onClick="selCameraModeOnClick"
+        android:scaleType="center"
+        app:layout_constraintDimensionRatio="1:0.8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <EditText
+        android:id="@+id/editText_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="이름을 입력해주세요"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView_setThumb" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="달력을 눌러 유통기한 또는 보관 d-day를 설정해주세요"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_name" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="305dp"
+        android:layout_height="59dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSave"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/textView6">
 
         <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_launcher_foreground" />
+            android:id="@+id/imageView_pic"
+            android:layout_width="56dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:onClick="setDateBtnOnClick"
+            app:srcCompat="@drawable/calendar1" />
 
         <TextView
-            android:id="@+id/textView_name"
+            android:id="@+id/textView_dday"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:autoText="false"
             android:gravity="center"
-            android:text="TextView" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_marginLeft="16dp"
-                android:onClick="setDateBtnOnClick"
-                app:srcCompat="@drawable/calendar1" />
-
-            <TextView
-                android:id="@+id/textView_dday"
-                android:layout_width="match_parent"
-                android:layout_height="57dp"
-                android:layout_marginRight="16dp"
-                android:autoText="false"
-                android:gravity="center|left"
-                android:onClick="setDateBtnOnClick"
-                android:text="0일 후에 알림이 울립니다"
-                app:autoSizeTextType="uniform" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/textView_barNum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:text="TextViewbar" />
-
-        <Button
-            android:id="@+id/buttonSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:onClick="setSavebtnOnclick"
-            android:text="저장" />
-
+            android:onClick="setDateBtnOnClick"
+            android:text="0일 남았습니다"
+            app:autoSizeTextType="uniform" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:onClick="setSavebtnOnclick"
+        android:text="저장"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="textView6,linearLayout" />
+
+    <TextView
+        android:id="@+id/textView_Notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="검색된 상품이 없습니다!\n일반 촬영 모드를 선택해주세요"
+        android:textColor="#FF0000"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/imageView_setThumb"
+        app:layout_constraintEnd_toEndOf="@id/imageView_setThumb"
+        app:layout_constraintStart_toStartOf="@+id/imageView_setThumb" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
