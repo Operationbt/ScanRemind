@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         //권한 확인
         int permissonCheck= ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if(permissonCheck == PackageManager.PERMISSION_DENIED) {
-            //Toast.makeText(getApplicationContext(), "카메라 권한 없음", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "카메라 권한이 없으면 기능 이용에 제한이 있을 수 있습니다", Toast.LENGTH_LONG).show();
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 100);
         }
 
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //DB 전체 삭제
-    private void delete() {
+    private void deleteAll() {
         deleteAllImageFiles();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String sql = "DELETE FROM " + BarcodeDataContract.BarcodeTable.TABLE_NAME + ";";
@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder alertDlg = new AlertDialog.Builder(view.getContext());
-                alertDlg.setMessage(bList.get(position).getImageSrc() + "\n" + bList.get(position).getName() + " 삭제할까요?");
+                alertDlg.setMessage(bList.get(position).getName() + " 삭제할까요?");
                 alertDlg.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
         bListAdapter.notifyDataSetChanged();
 
     }
+    //DB에 저장된 데이터를 bList로 옮기고 리스트뷰 갱신
     public void InitializeBarcodeList() {
         bList.addAll(selectList());
         bListAdapter.notifyDataSetChanged();
@@ -326,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
 //                            data.getStringExtra("dday"));
                     addBarcodeList((BarcodeData) data.getSerializableExtra("barcodedata"));
                 } else {
-                    Toast.makeText(MainActivity.this, "add Failed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "add Failed", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case REQUEST_EDIT_ITEM : //SetScanInfoActivity's edit result
@@ -334,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                     editBarcodeList(data.getIntExtra("index", -1),
                             (BarcodeData) data.getSerializableExtra("barcodedata"));
                 } else {
-                    Toast.makeText(MainActivity.this, "edit Failed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "edit Failed", Toast.LENGTH_SHORT).show();
                 }
         }
     }
@@ -410,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
         alertDlg.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                delete();
+                deleteAll();
                 bList.clear();
                 bListAdapter.notifyDataSetChanged();
                 refreshDdayItemCount(bList);

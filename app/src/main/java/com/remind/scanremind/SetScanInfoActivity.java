@@ -52,7 +52,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
     //static final String IMAGE_PATH = ""
     private BarcodeData barcodeData = new BarcodeData();
     private String mode = null;
-    private Bitmap image = null;
+    private Bitmap thumbImage = null;
     private int list_index = -1;
     private boolean isImageChanged = false;
     @Override
@@ -126,10 +126,12 @@ public class SetScanInfoActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK) {
                     this.isImageChanged = true;
                     Bundle extras = data.getExtras();
-                    image = (Bitmap) extras.get("data");
+                    thumbImage = (Bitmap) extras.get("data");
                     ImageView imageView = findViewById(R.id.imageView_setThumb);
-                    imageView.setImageBitmap(image);
+                    imageView.setImageBitmap(thumbImage);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    TextView noticeText = findViewById(R.id.textView_Notice);
+                    noticeText.setVisibility(View.GONE);
                 }
         }
     }
@@ -164,8 +166,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                         }
-
-                        Toast.makeText(getApplicationContext(), "카메라", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "카메라", Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                     }
                 });
@@ -180,7 +181,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                         integrator.setPrompt("SCAN CODE");
                         integrator.initiateScan(); //->onActivityResult case 49374로 이동
 
-                        Toast.makeText(getApplicationContext(), "바코드", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "바코드", Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                     }
                 });
@@ -266,10 +267,10 @@ public class SetScanInfoActivity extends AppCompatActivity {
         } else if(mode.equals("edit")) {
             intent.putExtra("index", this.list_index);
         }
-        //비트맵 유효하면 image를 파일로 저장하고 경로 획득
-        if(image != null) {
+        //비트맵 유효하면 thumbImage를 파일로 저장하고 경로 획득
+        if(thumbImage != null) {
             if(isImageChanged) { //바코드로 사진 얻었거나 일반 촬영으로 사진 얻은 경우
-                barcodeData.setImageSrc(saveBitmap(image, Long.toString(barcodeData.getItemNum())));
+                barcodeData.setImageSrc(saveBitmap(thumbImage, Long.toString(barcodeData.getItemNum())));
             }
         }
 
@@ -363,7 +364,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                     URLConnection conn = url.openConnection();
                     conn.connect();
                     BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
-                    image = BitmapFactory.decodeStream(bis);
+                    thumbImage = BitmapFactory.decodeStream(bis);
                     isImageChanged = true;
                     bis.close();
                 }
@@ -391,7 +392,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                 //대표 이미지를 썸네일로 설정
                 if(data.getImageSrc() != null) {
                     ImageView imageView = findViewById(R.id.imageView_setThumb);
-                    imageView.setImageBitmap(image);
+                    imageView.setImageBitmap(thumbImage);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 }
             } else {
