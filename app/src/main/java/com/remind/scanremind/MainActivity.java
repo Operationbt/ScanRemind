@@ -77,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "카메라 권한이 없으면 기능 이용에 제한이 있을 수 있습니다", Toast.LENGTH_LONG).show();
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 100);
         }
-
-
-        //this.InitializeFirebaseDB();
         this.InitializeDB();
         this.InitializeView();
         this.InitializeBarcodeList();   //DB->리스트구조
@@ -110,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
     private void insert(BarcodeData b) {
         // Gets the data repository in write mode
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(BarcodeDataContract.BarcodeTable.COLUMN_NAME_ITEMNUM, b.getItemNum());
@@ -239,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
         lstView_barcode = findViewById(R.id.lstView_barcode);
         //adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, bList);
         //lstView_barcode.setAdapter(adapter);
-        bListAdapter = new BarcodeListAdapter(bList); //어댑터 아이템은 bList를 가져가도록 초기화
-        lstView_barcode.setAdapter(bListAdapter);
+        bListAdapter = new BarcodeListAdapter(bList); //어댑터는 bList를 사용하도록 초기화
+        lstView_barcode.setAdapter(bListAdapter); //리스트뷰와 어댑터 연동
 
         //리스트 클릭 시 발생하는 이벤트
         lstView_barcode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -316,15 +312,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
             case REQUEST_ADD_ITEM : //SetScanInfoActivity's add result
                 if(resultCode == 1) {
-//                    addBarcodeList(data.getStringExtra("number"),
-//                            data.getStringExtra("name"),
-//                            data.getStringExtra("img"),
-//                            data.getStringExtra("date"),
-//                            data.getStringExtra("dday"));
                     addBarcodeList((BarcodeData) data.getSerializableExtra("barcodedata"));
                 } else {
                     //Toast.makeText(MainActivity.this, "add Failed", Toast.LENGTH_SHORT).show();

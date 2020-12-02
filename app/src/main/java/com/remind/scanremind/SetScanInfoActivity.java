@@ -49,6 +49,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
     // Millisecond 형태의 하루(24 시간)
     private final int ONE_DAY = 24 * 60 * 60 * 1000;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_BARCODE_SCAN = 49374; //zxing 바코드 스캔 CaptureActivity requestCode = c0de
     //static final String IMAGE_PATH = ""
     private BarcodeData barcodeData = new BarcodeData();
     private String mode = null;
@@ -105,12 +106,11 @@ public class SetScanInfoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case 49374 :    //zxing 바코드 스캔 CaptureActivity requestCode = c0de
+            case REQUEST_BARCODE_SCAN : //바코드 스캔 결과
                 IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
                 if (result != null) {
                     if (result.getContents() != null) {
                         //Toast.makeText(getApplicationContext(), result.getContents(), Toast.LENGTH_SHORT).show();
-
                         barcodeData.setNumber(result.getContents()); //데이터 객체 스캔된 바코드 넘버로 초기화
                         //Toast.makeText(getApplicationContext(), "검색 중", Toast.LENGTH_SHORT).show();
                         // AsyncTask를 통해 HttpURLConnection 수행.
@@ -122,7 +122,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                     }
                 }
                 break;
-            case REQUEST_IMAGE_CAPTURE :    //일반 촬영 결과
+            case REQUEST_IMAGE_CAPTURE : //일반 촬영 결과
                 if(resultCode == RESULT_OK) {
                     this.isImageChanged = true;
                     Bundle extras = data.getExtras();
@@ -133,6 +133,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                     TextView noticeText = findViewById(R.id.textView_Notice);
                     noticeText.setVisibility(View.GONE);
                 }
+                break;
         }
     }
 
@@ -161,7 +162,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                 selCamera.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) { //일반 촬영을 선택한 경우
-                        //일반 사진 촬영 인텐트 호출
+                        //일반 사진 촬영 엑티비티 호출
                         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -179,7 +180,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                         integrator.setOrientationLocked(false);
                         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
                         integrator.setPrompt("SCAN CODE");
-                        integrator.initiateScan(); //->onActivityResult case 49374로 이동
+                        integrator.initiateScan(); //->onActivityResult case REQUEST_BARCODE_SCAN로 이동
 
                         //Toast.makeText(getApplicationContext(), "바코드", Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
@@ -207,7 +208,6 @@ public class SetScanInfoActivity extends AppCompatActivity {
         DialogFragment newFragment = new SelDateFragment();
         newFragment.show(getSupportFragmentManager(), "dateSel");
     }
-
     public void processDatePickerResult(int year, int month, int day){
         //달력에서 선택한 날짜로 dday를 구해서 출력
         String month_string = Integer.toString(month+1);
@@ -249,7 +249,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
         return Long.toString(result);
     }
 
-    //BarcodeData 양식을 MainActivity에 다시 전달
+    //완성된 BarcodeData를 MainActivity에 전달
     public void setSavebtnOnclick(View v) {
         if(barcodeData.getName() == null || barcodeData.getName().isEmpty()) {
             Toast.makeText(getApplicationContext(), "이름을 입력해주세요", Toast.LENGTH_LONG).show();
@@ -329,7 +329,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
+            //검색 완료 후 다음 작업 할 수 있도록 한다.
             progressDialog = new ProgressDialog(SetScanInfoActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setMessage("검색 중입니다.");
@@ -340,14 +340,11 @@ public class SetScanInfoActivity extends AppCompatActivity {
         protected BarcodeData doInBackground(Void... params) {
             String name = null; // 요청 결과를 저장할 변수.
             String imgSrc = null;
-//            RequestHttpURLConnection requestHttpURLConnection = new RequestHttpURLConnection();
-//            result = requestHttpURLConnection.request(url, values); // 해당 URL로 부터 결과물을 얻어온다.
-//
-//            return parseBarcodeData(result);
-
             try {
                 Document doc = null;
+                //전체 html문서 획득
                 doc = Jsoup.connect("http://www.koreannet.or.kr/home/hpisSrchGtin.gs1?gtin=" + number).get();
+                //파싱
                 Elements title = doc.select(".productTit"); //class명이 productTit인 것을 선택
                 if(!title.text().isEmpty()) {
                     name = title.text().substring(14);    //13자리 GTIN번호와 공백 하나 제거
@@ -380,7 +377,6 @@ public class SetScanInfoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(BarcodeData data) {
             super.onPostExecute(data);
-
             //doInBackground()로 부터 리턴된 값이 onPostExecute()의 매개변수로 넘어오므로 s를 출력한다.
             Log.d("onPostExecute", "onPostExecute: " + data);
             EditText editText = findViewById(R.id.editText_name);
@@ -399,7 +395,7 @@ public class SetScanInfoActivity extends AppCompatActivity {
                 noticeText.setText("검색된 상품이 없습니다!\n일반 촬영 모드를 선택해주세요");
                 noticeText.setVisibility(View.VISIBLE);
             }
-            progressDialog.dismiss();
+            progressDialog.dismiss(); //검색중 다이얼로그 해제
         }
     }
 }

@@ -38,8 +38,7 @@ public class SetAlarmTimeActivity extends AppCompatActivity {
 
         numberPicker = (NumberPicker)findViewById(R.id.numPicker);
 
-        // 앞서 설정한 값으로 보여주기
-        // 없으면 디폴트 값은 현재시간
+        //앞서 설정한 값을 사용. 없으면 디폴트 값은 현재시간
         SharedPreferences sharedPreferences = getSharedPreferences("daily alarm", MODE_PRIVATE);
         long millis = sharedPreferences.getLong("nextNotifyTime", Calendar.getInstance().getTimeInMillis());
         int ddaynum = sharedPreferences.getInt("ddayThreshold", 1);
@@ -69,8 +68,6 @@ public class SetAlarmTimeActivity extends AppCompatActivity {
             timePicker.setCurrentHour(pre_hour);
             timePicker.setCurrentMinute(pre_minute);
         }
-
-
         //NumberPicker 초기화
         NumberPicker numberPicker = findViewById(R.id.numPicker);
         numberPicker.setMinValue(1);
@@ -115,7 +112,7 @@ public class SetAlarmTimeActivity extends AppCompatActivity {
         String date_text = new SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분 ", Locale.getDefault()).format(currentDateTime);
         Toast.makeText(getApplicationContext(),date_text + "으로 알람이 설정되었습니다!", Toast.LENGTH_SHORT).show();
 
-        //  Preference에 설정한 값 저장
+        //Preference에 설정한 값 저장
         SharedPreferences.Editor editor = getSharedPreferences("daily alarm", MODE_PRIVATE).edit();
         editor.putLong("nextNotifyTime", (long)calendar.getTimeInMillis());
         editor.putInt("ddayThreshold", numberPicker.getValue());
@@ -130,8 +127,8 @@ public class SetAlarmTimeActivity extends AppCompatActivity {
         Boolean dailyNotify = true; // 무조건 알람을 사용
 
         PackageManager pm = this.getPackageManager();
-        ComponentName receiver = new ComponentName(this, DeviceBootReceiver.class);
-        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        ComponentName receiver = new ComponentName(this, DeviceBootReceiver.class); //재부팅 broadcast 받음
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class); //알람 broadcast 받음
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
@@ -150,7 +147,6 @@ public class SetAlarmTimeActivity extends AppCompatActivity {
             pm.setComponentEnabledSetting(receiver,
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP);
-
         }
     }
 }

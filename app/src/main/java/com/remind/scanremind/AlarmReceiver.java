@@ -33,9 +33,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         //OREO API 26 이상에서는 채널 필요
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-
-            builder.setSmallIcon(R.drawable.ic_launcher_foreground); //mipmap 사용시 Oreo 이상에서 시스템 UI 에러남
-
+            //builder.setSmallIcon(R.drawable.ic_launcher_foreground); //mipmap 사용시 Oreo 이상에서 시스템 UI 에러남
+            builder.setSmallIcon(R.mipmap.ic_alramclock_round);
 
             String channelName ="매일 알람 채널";
             String description = "매일 정해진 시간에 알람합니다.";
